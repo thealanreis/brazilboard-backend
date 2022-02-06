@@ -1,0 +1,27 @@
+requests==2.25.1
+flask==1.1.2
+psycopg2==2.8.6
+flask-sqlalchemy==2.5.1
+flask-wtf==0.14.3
+SQLAlchemy-serializer==1.3.4.4
+gunicorn==20.1.0
+flask-sqlalchemy-stubs==0.2
+shortuuid==1.0.1
+Flask-Session==0.4.0
+flask-cors
+# pyjwt==2.0.1
+# google-auth==1.28.0
+# cryptography==3.4.6
+# config==0.5.0
+
+# pycryptodome==3.10.1
+# parse==1.19.0
+
+# geopy==2.1.0
+# pycep-correios==5.0.0
+# geoalchemy2==0.8.5
+# flask-mail==0.9.1
+
+# googlemaps==4.5.3
+
+# boto3==1.20.3

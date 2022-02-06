@@ -1,0 +1,8 @@
+{
+    "app_name" : "Brazil Board",  
+    "db_host" : "localhost",
+    "db_name" : "brazilboard", 
+    "db_user" : "postgres", 
+    "db_password" : "123", 
+    "debug_mode" : "false"
+}
