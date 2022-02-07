@@ -4,15 +4,15 @@ from datatabase.dao import dao_post as dao_post
 
 class PostEndpoint(GenericEndpoint):
     routes = [
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/post/<post_uuid>',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/post/<post_uuid>',
             'method': 'GET', 'operation': 'get_post', 'perm': 'read_topic'},
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/post',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/post',
             'method': 'GET', 'operation': 'get_posts', 'perm': 'read_topic'},
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/post/create',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/post/create',
             'method': 'POST', 'operation': 'create_post', 'perm': 'write_post'},
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/post/<post_uuid>/update',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/post/<post_uuid>/update',
             'method': 'POST', 'operation': 'update_post', 'perm': 'edit_post'},
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/post/<post_uuid>/delete',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/post/<post_uuid>/delete',
             'method': 'POST', 'operation': 'delete_post', 'perm': 'delete_post'},
     ]
 

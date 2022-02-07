@@ -8,7 +8,7 @@ from flask import session, g
 
 
 def get_posts(json):
-    topic_uuid = json['topic_uuid']
+    topic_uuid = json['tuuid']
     fields = ('uuid', 'name', 'created',
               'owner.username', 'owner.uuid', 'posts')
     _topic = Topic.query.filter_by(uuid=topic_uuid).first()
@@ -18,7 +18,7 @@ def get_posts(json):
 def create_post(json):
     post = Post()
     owner = get_logged_user()
-    post.topic_uuid = json['topic_uuid']
+    post.topic_uuid = json['tuuid']
     post.content = json['content']
     post.owner_id = owner.id
     commit(post)

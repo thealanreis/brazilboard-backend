@@ -55,7 +55,7 @@ def route_guard_route():
 
 
 def enforce_forum_acl(match):
-    forum_uuid = request.view_args['forum_uuid']
+    forum_uuid = request.view_args['fuuid']
     role_id = session.get('role_id')
     user_id = session.get('id')
 

@@ -4,15 +4,15 @@ from datatabase.dao import dao_topic as dao_topic
 
 class TopicEndpoint(GenericEndpoint):
     routes = [
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>', 'method': 'GET',
+        {'route': '/forum/<fuuid>/topic/<tuuid>', 'method': 'GET',
             'operation': 'get_topic', 'perm': 'read_topic'},
-        {'route': '/forum/<forum_uuid>/topic', 'method': 'GET',
+        {'route': '/forum/<fuuid>/topic', 'method': 'GET',
             'operation': 'get_topics', 'perm': 'read_topic'},
-        {'route': '/forum/<forum_uuid>/topic/create',
+        {'route': '/forum/<fuuid>/topic/create',
             'method': 'POST', 'operation': 'create_topic', 'perm': 'write_topic'},
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/update',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/update',
             'method': 'POST', 'operation': 'update_topic', 'perm': 'edit_topic'},
-        {'route': '/forum/<forum_uuid>/topic/<topic_uuid>/delete',
+        {'route': '/forum/<fuuid>/topic/<tuuid>/delete',
             'method': 'POST', 'operation': 'delete_topic', 'perm': 'delete_topic'},
     ]
 

@@ -7,7 +7,7 @@ from datatabase.model.user import User
 from backend import db
 
 def get_forum(json):
-    forum_uuid = json['forum_uuid']
+    forum_uuid = json['fuuid']
     forum_ = Forum.query.filter_by(uuid=forum_uuid).first()
 
     fields = ('uuid', 'name', 'moderators.id', 'moderators.username', 'acls')
@@ -50,7 +50,7 @@ def create_forum(json):
 
 def update_forum(json):
     print('json', json)
-    forum_: Forum = Forum.query.filter_by(uuid=json['forum_uuid']).first()
+    forum_: Forum = Forum.query.filter_by(uuid=json['fuuid']).first()
     forum_.name = json['name']
     # forum: Forum = string_to_property(json, forum_, ['name'])
     db.session.add(forum_)
@@ -82,6 +82,6 @@ def delete_forum(json):
     pass
 
 def get_forum_acl(json):
-    forum_uuid = json['forum_uuid']
+    forum_uuid = json['fuuid']
     forum_acls_ = ForumACL.query.filter_by(forum_uuid=forum_uuid).all()
     return jsonify_list(forum_acls_)
