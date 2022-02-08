@@ -20,6 +20,7 @@ CREATE TABLE "user"(
 	created TIMESTAMP,
 	last_login TIMESTAMP,
 	active BOOLEAN,
+	signature VARCHAR(500),
 	FOREIGN KEY(role_id) REFERENCES role(id)
 );
 

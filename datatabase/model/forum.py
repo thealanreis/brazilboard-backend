@@ -16,6 +16,7 @@ moderators_ = db.Table('moderator_acl',
 class Forum(db.Model, SerializerMixin):
 
     serialize_only = ('uuid', 'name', 'created', 'moderators')
+    datetime_format = '%d/%m/%Y %H:%M'
 
     __tablename__ = 'forum'
     uuid = db.Column(db.String(), default=generate_uuid, primary_key=True)

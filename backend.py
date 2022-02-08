@@ -102,7 +102,7 @@ def load_config_files():
 
             CONF = json.load(f_conf)
 
-            conf_keys = ['app_name',  'db_host','db_name', 'db_user', 'db_password', 'debug_mode']
+            conf_keys = ['app_name',  'db_host','db_name', 'db_user', 'db_password', 'debug_mode', 'backend_prefix']
 
             if not CONF or not all(key in CONF for key in conf_keys):
                 print(

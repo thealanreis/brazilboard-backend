@@ -8,11 +8,17 @@ from common.request_response_utils import response_factory
 from datatabase.dao.dao_user import get_acl_entry
 from traceback import print_exc
 from datatabase.model.forum import Forum
-
+from flask import current_app
 from datatabase.model.forum_acl import ForumACL
 # from datatabase.model.moderator_acl import ModeratorACL
 route_guard_bp = Blueprint('route_guard', __name__)
 
+
+@route_guard_bp.route('/routes')
+def routes():
+    print('ae', current_app.CONF)
+    prefix = current_app.CONF['backend_prefix']
+    return {'items': [ {'path': f"{prefix}{route['route']}", 'keyword' : route['operation']} for route in all_routes]}
 
 @route_guard_bp.before_app_request
 def route_guard_route():
@@ -88,7 +94,8 @@ def route_guard_route(response):
     if 'acl' in g:
         acl = g.get('acl')
         r = response.get_json()
-        r['result']['acl'] = acl
+        if r and r.get('result'):
+            r['result']['acl'] = acl
         response.data = json.dumps(r)
     return response
 

@@ -8,7 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 class User(db.Model, SerializerMixin):
 
-    serialize_only = ('uuid', 'username','picture_uploaded', 'created', 'active')
+    serialize_only = ('uuid', 'username','picture_uploaded', 'created', 'active', 'signature')
 
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +22,7 @@ class User(db.Model, SerializerMixin):
     created = db.Column(db.TIMESTAMP, default=dt.now())
     last_login = db.Column(db.TIMESTAMP, default=dt.now())
     active = db.Column(db.Boolean(), default=True)
+    signature = db.Column(db.String())
     role = db.relationship('Role', backref=db.backref('users'))
 
     @hybrid_property

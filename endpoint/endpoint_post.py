@@ -20,3 +20,5 @@ class PostEndpoint(GenericEndpoint):
     operation_parameters = ['input']
     # upload_operations = []
     # upload_method = ''
+
+    
