@@ -1,14 +1,13 @@
-from email.policy import default
 from sqlalchemy_serializer import SerializerMixin
 from backend import db
 from common.uuid_utils import generate_uuid
-from datatabase.model.post import Post
+from model.post import Post
 from datetime import datetime as dt
 class Topic(db.Model, SerializerMixin):
 
     serialize_only = ('uuid', 'name', 'created', 'owner.username', 'owner.uuid')
-
     __tablename__ = 'topic'
+
     uuid = db.Column(db.String(), default=generate_uuid, primary_key=True)
     name = db.Column(db.String())
     owner_id = db.Column(db.Integer, db.ForeignKey(

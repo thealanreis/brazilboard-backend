@@ -1,42 +1,51 @@
+from endpoint.generic_endpoint import GenericEndpoint
 from common.jsonify import jsonify_list
 from common.password_utils import password_match
 from common.string_utils import string_to_property
-from datatabase.dao.dao_generic import commit
-from datatabase.model.forum_acl import ForumACL
-from datatabase.model.role import Role
-from datatabase.model.user import User
+from common.dao_generic import commit
+from model.forum_acl import ForumACL
+from model.role import Role
+from model.user import User
 from flask import session
-from backend import db
 
-def update_my_user(json):
+user_endpoint = GenericEndpoint()
+
+@user_endpoint.route()
+def update_my_user(post):
     user_ = User.query.filter_by(id=session['id']).first()
-    user_.signature = json['signature']
+    user_.signature = post['signature']
     commit(user_)
 
 
-def get_my_user(json):
+@user_endpoint.route()
+def get_my_user(get):
     user_ = User.query.filter_by(id=session['id']).first()
-    fields = ('uuid', 'username','picture_uploaded', 'created', 'active', 'signature', 'email')
+    fields = ('uuid', 'username', 'picture_uploaded',
+              'created', 'active', 'signature', 'email')
     return user_.to_dict(only=fields)
 
-def get_users(json):
+
+@user_endpoint.route()
+def get_users(get):
     usernames_ = User.query.all()
     fields = ('id', 'username')
     return jsonify_list(usernames_, fields=fields)
 
 
-def register(json):
+@user_endpoint.route()
+def register(post):
     user_ = User()
     role_ = Role.query.filter_by(name='LOGGED_USER').first()
     user_.role_id = role_.id
 
-    user = string_to_property(json, user_, ['username', 'email', 'password'])
+    user = string_to_property(post, user_, ['username', 'email', 'password'])
     commit(user)
 
 
-def login(json):
-    password = json['password']
-    user_ = User.query.filter_by(email=json['email']).first()
+@user_endpoint.route()
+def login(post):
+    password = post['password']
+    user_ = User.query.filter_by(email=post['email']).first()
 
     # Clear previous session
     if user_ and password_match(password, user_.password):
@@ -54,7 +63,8 @@ def login(json):
         return None
 
 
-def logged_in(json):
+@user_endpoint.route()
+def logged_in(get):
     uuid = session.get('uuid')
     if uuid:
         user_ = User.query.filter_by(uuid=uuid).first()
@@ -64,9 +74,17 @@ def logged_in(json):
         return None
 
 
-def logout(json):
+@user_endpoint.route()
+def logout(get):
     clear_session_keys()
     return True
+
+@user_endpoint.route()
+def get_roles(get):
+    exclude_roles = ['ADMIN', 'MODERATOR']
+    roles_ = Role.query.filter(Role.name.not_in(exclude_roles)).all()
+    return jsonify_list(roles_)
+
 
 def get_logged_user():
     uuid = session['uuid']
@@ -77,14 +95,9 @@ def get_user_id():
     return session['id']
 
 
-def get_roles(json):
-    exclude_roles = ['ADMIN', 'MODERATOR']
-    roles_ = Role.query.filter(Role.name.not_in(exclude_roles)).all()
-    return jsonify_list(roles_)
-
-
 def get_acl_entry(forum_uuid, role_id, perm):
     return ForumACL.query.filter(ForumACL.forum_uuid == forum_uuid, ForumACL.role_id == role_id, getattr(ForumACL, perm) == True).first()
+
 
 def clear_session_keys():
     for key in list(session):

@@ -1,31 +1,38 @@
+from endpoint.generic_endpoint import GenericEndpoint
 from common.jsonify import jsonify_list
 from common.string_utils import string_to_property
-from datatabase.dao.dao_user import get_user_id
-from datatabase.model.forum_acl import ForumACL
-from datatabase.model.forum import Forum
-from datatabase.model.user import User
+from model.forum_acl import ForumACL
+from model.forum import Forum
+from model.user import User
 from backend import db
+from flask import session
 
-def get_forum(json):
-    forum_uuid = json['fuuid']
+forum_endpoint = GenericEndpoint()
+
+@forum_endpoint.route('/manage/forum/<fuuid>')
+def get_forum(get):
+    forum_uuid = get['fuuid']
     forum_ = Forum.query.filter_by(uuid=forum_uuid).first()
 
     fields = ('uuid', 'name', 'moderators.id', 'moderators.username', 'acls')
     return forum_.to_dict(only=fields)
 
-def get_forums(json):
+
+@forum_endpoint.route('/get-forums')
+def get_forums(get):
     fields = ('name', 'uuid', 'created', 'owner.username')
     return jsonify_list(Forum.query.all(), fields=fields)
 
 
-def create_forum(json):
+@forum_endpoint.route('/manage/forum/create')
+def create_forum(post):
     forum_: Forum = Forum()
-    forum_.owner_id = get_user_id()
-    forum: Forum = string_to_property(json, forum_, ['name'])
+    forum_.owner_id = session['id']
+    forum: Forum = string_to_property(post, forum_, ['name'])
     db.session.add(forum)
     db.session.flush()
 
-    acls = json['acls']
+    acls = post['acls']
     for acl in acls:
         forum_acl_ = ForumACL()
         forum_acl_.read_topic = acls[acl]['read_topic']
@@ -42,21 +49,21 @@ def create_forum(json):
         # delete_pool =  acls[acl]['delete_pool'],
         db.session.add(forum_acl_)
 
-    ids = [user['id'] for user in json['moderators']]
+    ids = [user['id'] for user in post['moderators']]
     users_ = User.query.filter(User.id.in_(ids)).all()
     forum.moderators = users_
     db.session.commit()
 
 
-def update_forum(json):
-    print('json', json)
-    forum_: Forum = Forum.query.filter_by(uuid=json['fuuid']).first()
-    forum_.name = json['name']
+@forum_endpoint.route('/manage/forum/<fuuid>/update')
+def update_forum(post):
+    forum_: Forum = Forum.query.filter_by(uuid=post['fuuid']).first()
+    forum_.name = post['name']
     # forum: Forum = string_to_property(json, forum_, ['name'])
     db.session.add(forum_)
     db.session.flush()
 
-    acls = json['acls']
+    acls = post['acls']
     for acl in acls:
         forum_acl_ = ForumACL.query.filter_by(id=acls[acl]['id']).first()
         forum_acl_.read_topic = acls[acl]['read_topic']
@@ -72,16 +79,18 @@ def update_forum(json):
 
         db.session.add(forum_acl_)
 
-
-    ids = [user['id'] for user in json['moderators']]
+    ids = [user['id'] for user in post['moderators']]
     users_ = User.query.filter(User.id.in_(ids)).all()
     forum_.moderators = users_
 
 
-def delete_forum(json):
+@forum_endpoint.route('/manage/forum/<fuuid>/delete')
+def delete_forum(post):
     pass
 
-def get_forum_acl(json):
-    forum_uuid = json['fuuid']
+
+@forum_endpoint.route('/manage/forum/<fuuid>/get_forum_acl')
+def get_forum_acl(post):
+    forum_uuid = post['fuuid']
     forum_acls_ = ForumACL.query.filter_by(forum_uuid=forum_uuid).all()
     return jsonify_list(forum_acls_)

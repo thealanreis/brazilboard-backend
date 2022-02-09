@@ -1,34 +1,36 @@
 from common.custom_exception import CustomException
-from common.jsonify import jsonify_list
-from datatabase.dao.dao_generic import commit, delete
-from datatabase.dao.dao_user import get_logged_user
-from datatabase.model.post import Post
-from datatabase.model.topic import Topic
+from endpoint.generic_endpoint import GenericEndpoint
+from common.dao_generic import commit, delete
+from endpoint.user_endpoint import get_logged_user
+from model.post import Post
+from model.topic import Topic
 from flask import session, g
 
+post_endpoint = GenericEndpoint()
 
-def get_posts(json):
-    topic_uuid = json['tuuid']
+@post_endpoint.route('/forum/<fuuid>/topic/<tuuid>/post', 'read_topic')
+def get_posts(get):
+    topic_uuid = get['tuuid']
     fields = ('uuid', 'name', 'created',
               'owner.username', 'owner.uuid', 'posts')
     _topic = Topic.query.filter_by(uuid=topic_uuid).first()
     return _topic.to_dict(only=fields)
 
-
-def create_post(json):
-    post = Post()
+@post_endpoint.route('/forum/<fuuid>/topic/<tuuid>/post/create', 'write_post')
+def create_post(post):
+    post_ = Post()
     owner = get_logged_user()
-    post.topic_uuid = json['tuuid']
-    post.content = json['content']
-    post.owner_id = owner.id
-    commit(post)
-    return post.to_dict()
+    post_.topic_uuid = post['tuuid']
+    post_.content = post['content']
+    post_.owner_id = owner.id
+    commit(post_)
+    return post_.to_dict()
 
-
-def update_post(json):
+@post_endpoint.route('/forum/<fuuid>/topic/<tuuid>/post/<post_uuid>/update','edit_post')
+def update_post(post):
     owner_id = session.get('id')
-    uuid = json['uuid']
-    content = json['content']
+    uuid = post['uuid']
+    content = post['content']
 
     if 'edit_any_post' in g.acl:
         post_ = Post.query.filter_by(uuid=uuid).first()
@@ -44,10 +46,10 @@ def update_post(json):
     else:
         raise CustomException('Você não pode editar este post')
 
-
-def delete_post(json):
+@post_endpoint.route('/forum/<fuuid>/topic/<tuuid>/post/<post_uuid>/delete', 'delete_post')
+def delete_post(post):
     owner_id = session.get('id')
-    uuid = json['uuid']
+    uuid = post['uuid']
 
     if 'delete_any_post' in g.acl:
         post_ = Post.query.filter_by(uuid=uuid).first()

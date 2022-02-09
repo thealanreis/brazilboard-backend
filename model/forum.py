@@ -1,9 +1,8 @@
 from ast import List
-from email.policy import default
 from sqlalchemy_serializer import SerializerMixin
 from backend import db
 from common.uuid_utils import generate_uuid
-from datatabase.model.topic import Topic
+from model.topic import Topic
 from datetime import datetime as dt
 
 

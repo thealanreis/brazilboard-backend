@@ -9,8 +9,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 class User(db.Model, SerializerMixin):
 
     serialize_only = ('uuid', 'username','picture_uploaded', 'created', 'active', 'signature')
-
     __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(), default=generate_uuid)
     username = db.Column(db.String())

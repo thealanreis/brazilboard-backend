@@ -1,6 +1,5 @@
 from sqlalchemy_serializer import SerializerMixin
 from backend import db
-from datetime import datetime as dt
 
 class ForumACL(db.Model, SerializerMixin):
     # serialize_only = ('forum_uuid', 'role_id', 'read', 'write')

@@ -1,20 +1,18 @@
 import json
 import traceback
 from pprint import pprint
-import os
 from flask_cors import CORS
-# from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask import Flask
-# Cross Script Request Forgery Protection
 from common.app_defaults import TOKEN_TIMEOUT_TIME
 from flask_session import Session
-
+# from flask_mail import Mail
 
 csrf = CSRFProtect()
 app = db = mail = session = None
 all_routes = []
+
 
 def create_app():
     """
@@ -39,11 +37,9 @@ def create_app():
     app.secret_key = '123QWEZXC'
     csrf.init_app(app)
 
-
     app.CONF = load_config_files()
     initialize_mail_settings(app)
 
-    
     # mail = Mail(app)
     db_user = app.CONF['db_user']
     db_password = app.CONF['db_password']
@@ -57,26 +53,21 @@ def create_app():
     Session(app)
     db.create_all()
     CORS(app)
-    
 
-
-    #Blueprints
+    # Blueprints
     from endpoint import route_guard
     app.register_blueprint(route_guard.route_guard_bp)
-
-    # Inicializa rotas do Generic Endpoint
-    from endpoint.endpoint_user import UserEndpoint
-    from endpoint.endpoint_forum import ForumEndpoint
-    from endpoint.endpoint_topic import TopicEndpoint
-    from endpoint.endpoint_post import PostEndpoint
+    from endpoint.user_endpoint import user_endpoint
+    from endpoint.forum_endpoint import forum_endpoint
+    from endpoint.topic_endpoint import topic_endpoint
+    from endpoint.post_endpoint import post_endpoint
 
     try:
         with app.app_context():
-            UserEndpoint.initialize_routes()
-            ForumEndpoint.initialize_routes()
-            TopicEndpoint.initialize_routes()
-            PostEndpoint.initialize_routes()
-
+            forum_endpoint.initialize_routes()
+            user_endpoint.initialize_routes()
+            topic_endpoint.initialize_routes()
+            post_endpoint.initialize_routes()
         return app
 
     except Exception as e:
@@ -94,15 +85,12 @@ def load_config_files():
     """
 
     print('Loading intialization files')
-
-    # BASE = os.environ['PYTHONPATH']
-    # # BASE = '/home/alan/1001pets-back'
     try:
         with open('./conf/app.config.json', 'r') as f_conf:
 
             CONF = json.load(f_conf)
-
-            conf_keys = ['app_name',  'db_host','db_name', 'db_user', 'db_password', 'debug_mode', 'backend_prefix']
+            conf_keys = ['app_name',  'db_host', 'db_name', 'db_user',
+                         'db_password', 'debug_mode', 'backend_prefix']
 
             if not CONF or not all(key in CONF for key in conf_keys):
                 print(

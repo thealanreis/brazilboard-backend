@@ -5,20 +5,21 @@ from sqlalchemy import all_
 from backend import all_routes
 from common.custom_exception import CustomException
 from common.request_response_utils import response_factory
-from datatabase.dao.dao_user import get_acl_entry
+from endpoint.user_endpoint import get_acl_entry
 from traceback import print_exc
-from datatabase.model.forum import Forum
+from model.forum import Forum
 from flask import current_app
-from datatabase.model.forum_acl import ForumACL
-# from datatabase.model.moderator_acl import ModeratorACL
+from model.forum_acl import ForumACL
+from model.role import Role
+# from model.moderator_acl import ModeratorACL
 route_guard_bp = Blueprint('route_guard', __name__)
 
 
 @route_guard_bp.route('/routes')
 def routes():
-    print('ae', current_app.CONF)
     prefix = current_app.CONF['backend_prefix']
-    return {'items': [ {'path': f"{prefix}{route['route']}", 'keyword' : route['operation']} for route in all_routes]}
+    return {'items': [{'path': f"{prefix}{route['route']}", 'keyword': route['operation'].__name__} for route in all_routes]}
+
 
 @route_guard_bp.before_app_request
 def route_guard_route():
@@ -65,8 +66,8 @@ def enforce_forum_acl(match):
     role_id = session.get('role_id')
     user_id = session.get('id')
 
-    forum_:Forum = Forum.query.filter_by(uuid=forum_uuid).first()
-    
+    forum_: Forum = Forum.query.filter_by(uuid=forum_uuid).first()
+
     # moderator_ = ModeratorACL.query.filter_by(
     #     user_id=user_id, forum_uuid=forum_uuid).first()
 
@@ -77,10 +78,14 @@ def enforce_forum_acl(match):
                  'write_pool', 'edit_pool', 'delete_pool',
                  'edit_any_topic', 'delete_any_topic', 'edit_any_post', 'delete_any_post']
 
-    else: 
+    else:
+        if role_id is None:
+            role_ = Role.query.filter_by(name='VISITOR').first()
+            role_id = role_.id
+
+
         perm = match['perm']
         acl_ = get_acl_entry(forum_uuid, role_id, perm)
-        print(acl_)
 
         if acl_ is None:
             return response_factory(4, None, None)
