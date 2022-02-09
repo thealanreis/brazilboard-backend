@@ -21,14 +21,3 @@ class ForumACL(db.Model, SerializerMixin):
     
     role = db.relationship('Role')
     forum = db.relationship('Forum', backref=db.backref('acls'))
-
-    # def __init__(self, forum_uuid, role_id, read_topic, write_topic, edit_topic, delete_topic, write_post, edit_post, delete_post):
-    #     self.forum_uuid = forum_uuid
-    #     self.role_id = role_id
-    #     self.read_topic = read_topic
-    #     self.write_topic = write_topic
-    #     self.edit_topic = edit_topic
-    #     self.delete_topic = delete_topic
-    #     self.write_post = write_post
-    #     self.edit_post = edit_post
-    #     self.delete_post = delete_post

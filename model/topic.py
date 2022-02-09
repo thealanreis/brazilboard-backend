@@ -17,6 +17,3 @@ class Topic(db.Model, SerializerMixin):
     created = db.Column(db.TIMESTAMP, default=dt.now)
     owner = db.relationship('User', backref=db.backref('topics'))
     posts = db.relationship('Post', backref=db.backref('topic'), order_by="asc(Post.created)")
-
-    
-

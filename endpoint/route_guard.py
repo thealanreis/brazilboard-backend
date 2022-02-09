@@ -58,18 +58,14 @@ def route_guard_route():
             print_exc()
             return response_factory(4, None, None)
 
-    # print('ALL ROUTES', all_routes)
 
 
 def enforce_forum_acl(match):
     forum_uuid = request.view_args['fuuid']
     role_id = session.get('role_id')
     user_id = session.get('id')
-
     forum_: Forum = Forum.query.filter_by(uuid=forum_uuid).first()
 
-    # moderator_ = ModeratorACL.query.filter_by(
-    #     user_id=user_id, forum_uuid=forum_uuid).first()
 
     if any(user for user in forum_.moderators if user.id == user_id):
         print('moderador')

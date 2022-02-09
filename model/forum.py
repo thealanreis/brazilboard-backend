@@ -26,7 +26,3 @@ class Forum(db.Model, SerializerMixin):
     owner = db.relationship('User', backref=db.backref('forums'))
     topics = db.relationship('Topic', backref=db.backref('forum'), order_by="asc(Topic.created)")
     moderators: List = db.relationship("User", secondary=moderators_, order_by="asc(User.username)")
-
-    
-
-

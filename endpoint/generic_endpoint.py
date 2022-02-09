@@ -1,6 +1,5 @@
 import traceback
-from flask import current_app, request, session
-from sqlalchemy import all_
+from flask import current_app, request
 # from common.app_defaults import process_input, response_factory
 from common.custom_exception import CustomException
 from common.request_response_utils import proccess_input, response_factory
@@ -54,9 +53,7 @@ class GenericEndpoint(object):
 
         def decorator(f):
 
-            print('função ' ,inspect.signature(f))
             method = ''
-
             if str(inspect.signature(f)) == '(post)':
                 method = 'POST'
             else:
