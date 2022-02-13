@@ -5,11 +5,17 @@ from common.custom_exception import CustomException
 
 def proccess_input(request):
 
+    input = {}
+    
     if request.is_json:
         return request.json
 
-    elif request.form:
-        input = json.loads(request.form[DEFAULT_INPUT_KEY])
+    elif request.files:
+        # try: 
+        #     input = json.loads(request.form[DEFAULT_INPUT_KEY])
+
+        # except Exception as e:
+        #     pass
         input['files'] = request.files
 
         return input

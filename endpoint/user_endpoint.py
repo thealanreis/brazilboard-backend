@@ -1,3 +1,4 @@
+from common.file_server import upload_files
 from endpoint.generic_endpoint import GenericEndpoint
 from common.jsonify import jsonify_list
 from common.password_utils import password_match
@@ -9,6 +10,22 @@ from model.user import User
 from flask import session
 
 user_endpoint = GenericEndpoint()
+
+
+@user_endpoint.route('/teste/<nome>')
+def teste(get):
+    return {'msg': get['nome']}
+
+
+@user_endpoint.route()
+def upload_my_avatar(post):
+    user_: User = User.query.filter_by(id=session['id']).first()
+    user_.picture_uploaded = True
+    avatar = post.get('files')
+    upload_files(avatar, 'AVATAR', f'{user_.uuid}.png')
+    commit(user_)
+    return {'ok': 1}
+
 
 @user_endpoint.route()
 def update_my_user(post):
@@ -78,6 +95,7 @@ def logged_in(get):
 def logout(get):
     clear_session_keys()
     return True
+
 
 @user_endpoint.route()
 def get_roles(get):

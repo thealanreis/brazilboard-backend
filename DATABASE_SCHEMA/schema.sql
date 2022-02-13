@@ -9,7 +9,7 @@ CREATE TABLE role(
 	description VARCHAR(40)
 );
 
-CREATE TABLE "user"(
+CREATE TABLE user(
 	id SERIAL PRIMARY KEY,
 	uuid VARCHAR(22),
 	username VARCHAR(100),
