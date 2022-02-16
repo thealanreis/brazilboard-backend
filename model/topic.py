@@ -16,4 +16,19 @@ class Topic(db.Model, SerializerMixin):
         "forum.uuid"), nullable=False)        
     created = db.Column(db.TIMESTAMP, default=dt.now)
     owner = db.relationship('User', backref=db.backref('topics'))
-    posts = db.relationship('Post', backref=db.backref('topic'), order_by="asc(Post.created)")
+    posts = db.relationship('Post', backref=db.backref('topic'), order_by="asc(Post.created)", cascade="all, delete-orphan")
+
+
+    @property
+    def first_post_content(self):
+        return self.posts[0].content
+
+    @first_post_content.setter
+    def first_post_content(self, content):
+        if self.posts:
+            self.posts[0].content = content
+
+            
+            
+
+    

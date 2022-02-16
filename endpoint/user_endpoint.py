@@ -9,7 +9,7 @@ from model.role import Role
 from model.user import User
 from flask import session
 
-user_endpoint = GenericEndpoint()
+user_endpoint = GenericEndpoint(User)
 
 
 @user_endpoint.route('/teste/<nome>')

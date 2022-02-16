@@ -71,6 +71,7 @@ def create_app():
         return app
 
     except Exception as e:
+        traceback.print_exc()
         print(e)
 
 

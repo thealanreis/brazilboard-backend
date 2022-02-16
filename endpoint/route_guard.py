@@ -18,7 +18,7 @@ route_guard_bp = Blueprint('route_guard', __name__)
 @route_guard_bp.route('/routes')
 def routes():
     prefix = current_app.CONF['backend_prefix']
-    return {'items': [{'path': f"{prefix}{route['route']}", 'keyword': route['operation'].__name__} for route in all_routes]}
+    return {'items': [{'path': f"{prefix}{route['route']}", 'keyword': route.get('keyword'), 'method' : route['method'].upper()} for route in all_routes]}
 
 
 @route_guard_bp.before_app_request
@@ -26,37 +26,32 @@ def route_guard_route():
 
     url = str(request.url_rule)
 
-    if session.get('role_name') == 'ADMIN':
-        g.acl = ['read_topic', 'write_topic', 'edit_topic', 'delete_topic',
+    g.acl = ['read_topic', 'write_topic', 'edit_topic', 'delete_topic',
                  'write_post', 'edit_post', 'delete_post',
                  'write_pool', 'edit_pool', 'delete_pool',
                  'edit_any_topic', 'delete_any_topic', 'edit_any_post', 'delete_any_post']
+    # if session.get('role_name') == 'ADMIN':
+    #     g.acl = ['read_topic', 'write_topic', 'edit_topic', 'delete_topic',
+    #              'write_post', 'edit_post', 'delete_post',
+    #              'write_pool', 'edit_pool', 'delete_pool',
+    #              'edit_any_topic', 'delete_any_topic', 'edit_any_post', 'delete_any_post']
 
-    # if session.get('role_name') == 'MODERATOR':
-    #     user_id = session.get('id')
-    #     moderator_ = ModeratorACL.query.filter_by(user_id=id).first()
 
-    #     if moderator_:
-    #         g.acl = ['read_topic', 'write_topic', 'edit_topic', 'delete_topic',
-    #                  'write_post', 'edit_post', 'delete_post',
-    #                  'write_pool', 'edit_pool', 'delete_pool',
-    #                  'edit_any_topic', 'delete_any_topic', 'edit_any_post', 'delete_any_post']
+    # else:
 
-    else:
+    #     try:
+    #         if url.startswith('/manage'):
+    #             if not any(role for role in ['ADMIN'] if role == session.get('role_name')):
+    #                 return response_factory(4, None, None)
 
-        try:
-            if url.startswith('/manage'):
-                if not any(role for role in ['ADMIN'] if role == session.get('role_name')):
-                    return response_factory(4, None, None)
+    #         if url.startswith('/forum'):
+    #             match = next(
+    #                 route for route in all_routes if route['route'] == url)
+    #             return enforce_forum_acl(match)
 
-            if url.startswith('/forum'):
-                match = next(
-                    route for route in all_routes if route['route'] == url)
-                return enforce_forum_acl(match)
-
-        except Exception as e:
-            print_exc()
-            return response_factory(4, None, None)
+    #     except Exception as e:
+    #         print_exc()
+    #         return response_factory(4, None, None)
 
 
 
